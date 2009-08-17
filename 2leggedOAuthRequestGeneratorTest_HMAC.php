@@ -54,5 +54,7 @@ function getResponse($url, $post_data = null) {
 <pre>
 <?php print $response; ?>
 </pre>
+<p><a href="./2leggedOAuthRequestGeneratorTest_RSA.php">RSA-SHA1</a></p>
+<p><a href="./2leggedOAuthRequestGeneratorTest_HMAC.php">HMAC-SHA1</a></p>
 </body>
 </html>
