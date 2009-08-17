@@ -29,16 +29,23 @@ class twoLeggedOAuthRequestGenerator{
   private $request;
   private $url;
 
-  function __construct( $access_url, $consumer_key, $consumer_secret = NULL, $method = "GET", $params = NULL ){
+  function __construct( $access_url, $consumer_key, $consumer_secret = NULL, $signature_method = 'RSA-SHA1', $method = 'GET', $params = NULL ){
     if( !$access_url || !$consumer_key ){
 		return false;
 	}
 	
     $consumer = new OAuthConsumer( $consumer_key, $consumer_secret );
-    $signature_method = new twoLeggedOAuthSignatureMethod_RSA_SHA1( $consumer_key );
-
-    $this->request = OAuthRequest::from_consumer_and_token($consumer, $consumer_secret, $method, $access_url, $params);
-    $this->request->sign_request($signature_method, $consumer, '');
+    $this->request = OAuthRequest::from_consumer_and_token($consumer, NULL, $method, $access_url, $params);
+	
+	if( $signature_method == 'RSA-SHA1' ){
+    	$signature_method = new twoLeggedOAuthSignatureMethod_RSA_SHA1( $consumer_key );
+		$this->request->sign_request($signature_method, $consumer, NULL);
+	}elseif( $signature_method == 'HMAC-SHA1' ){
+		$signature_method = new OAuthSignatureMethod_HMAC_SHA1();
+		$this->request->sign_request($signature_method, $consumer, NULL);
+	}else{
+		return false;
+	}
   }
   
   function getUrl(){
